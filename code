@@ -1,0 +1,71 @@
+
+import tkinter as tk
+from tkinter import messagebox
+import time
+
+# Global variables
+attempts = 3
+timer_running = False
+
+def login():
+    global attempts, timer_running
+    
+    if timer_running:
+        messagebox.showinfo("Please Wait", "You have to wait for the timer to expire before attempting to login again.")
+        return
+    
+    username = username_entry.get()
+    password = password_entry.get()
+    
+    # Check if username and password are correct
+    if username == "admin" and password == "password":
+        messagebox.showinfo("Login Successful", "Welcome, Admin!")
+        root.destroy()  # Close the window if login is successful
+    else:
+        attempts -= 1
+        if attempts > 0:
+            messagebox.showerror("Login Failed", f"Incorrect username or password. {attempts} attempts left.")
+        else:
+            messagebox.showerror("Login Failed", "Incorrect username or password. No attempts left. Please wait for 30 seconds.")
+            # Start timer
+            start_timer()
+            
+def start_timer():
+    global timer_running
+    timer_running = True
+    for i in range(30, 0, -1):
+        time_label.config(text=f"Please wait {i} seconds before next attempt.")
+        time.sleep(1)
+    time_label.config(text="")
+    timer_running = False
+    global attempts
+    attempts = 3
+
+# Create main window
+root = tk.Tk()
+root.title("Login")
+
+# Create username label and entry
+username_label = tk.Label(root, text="Username:")
+username_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.E)
+
+username_entry = tk.Entry(root)
+username_entry.grid(row=0, column=1, padx=5, pady=5)
+
+# Create password label and entry
+password_label = tk.Label(root, text="Password:")
+password_label.grid(row=1, column=0, padx=5, pady=5, sticky=tk.E)
+
+password_entry = tk.Entry(root, show="*")
+password_entry.grid(row=1, column=1, padx=5, pady=5)
+
+# Create login button
+login_button = tk.Button(root, text="Login", command=login)
+login_button.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
+# Create time label
+time_label = tk.Label(root, text="")
+time_label.grid(row=3, column=0, columnspan=2)
+
+# Run the main event loop
+root.mainloop()
